@@ -14,7 +14,7 @@ jobs:
 
     env:
       PDK_ROOT: ${{ github.workspace }}/pdks
-      OPENLANE_EXTRA_FLAGS: --dockerized
+      OPENLANE_EXTRA_FLAGS: --dockerized --docker-no-tty
 
     steps:
       - name: Checkout repository
