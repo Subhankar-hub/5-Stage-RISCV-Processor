@@ -1,0 +1,43 @@
+# OpenLane configuration for 5-Stage RV32IM RISC-V core
+# PDK: Sky130, target: sky130_fd_sc_hd
+
+set script_dir [file dirname [file normalize [info script]]]
+set project_dir [file dirname $script_dir]
+set rtl_dir [file join $project_dir rtl]
+
+# Design
+set ::env(DESIGN_NAME) "riscv_core"
+set ::env(VERILOG_FILES) [list \
+    [file join $rtl_dir defs.v] \
+    [file join $rtl_dir regfile.v] \
+    [file join $rtl_dir alu.v] \
+    [file join $rtl_dir mul_div.v] \
+    [file join $rtl_dir if_stage.v] \
+    [file join $rtl_dir id_stage.v] \
+    [file join $rtl_dir ex_stage.v] \
+    [file join $rtl_dir mem_stage.v] \
+    [file join $rtl_dir hazard_unit.v] \
+    [file join $rtl_dir riscv_core.v] \
+]
+
+set ::env(VERILOG_INCLUDE_DIRS) [list $rtl_dir]
+
+# Clock
+set ::env(CLOCK_PERIOD) "10.0"
+set ::env(CLOCK_PORT) "clk"
+
+# Floorplan
+set ::env(FP_SIZING) "absolute"
+set ::env(DIE_AREA) "0 0 500 500"
+set ::env(PL_TARGET_DENSITY) 0.40
+
+# IO placement: North=instr, South=data, West=clk/rst
+set ::env(IO_PCT) "0.70"
+
+# Use sky130_fd_sc_hd
+set ::env(PDK) "sky130A"
+set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
+
+# Synthesis
+set ::env(SYNTH_STRATEGY) "AREA 0"
+set ::env(SYNTH_MAX_FANOUT) 6

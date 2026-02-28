@@ -1,0 +1,4 @@
+-std=c++17
+-I/usr/share/verilator/include
+-I/usr/local/share/verilator/include
+-Iobj_dir
