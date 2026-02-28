@@ -38,8 +38,12 @@ jobs:
       - name: Fetch Sky130A PDK with volare
         run: |
           mkdir -p "${PDK_ROOT}"
-          # Download and enable the Sky130 PDK into PDK_ROOT (latest default Sky130A).
-          volare fetch --pdk sky130 --pdk-root "${PDK_ROOT}"
+          # Download and enable a specific Sky130 PDK version into PDK_ROOT.
+          # We pin to a known-good open_pdks Sky130A commit and pass it as the
+          # VERSION argument (positional) to volare.
+          VSKY130_VERSION=bdc9412b3e468c102d01b7cf6337be06ec6e9c9a
+          volare enable --pdk sky130 --pdk-root "${PDK_ROOT}" "${VSKY130_VERSION}" \
+            || volare fetch --pdk sky130 --pdk-root "${PDK_ROOT}" "${VSKY130_VERSION}"
 
       - name: Show environment
         run: |
