@@ -1,0 +1,10 @@
+rtl/defs.v
+rtl/regfile.v
+rtl/alu.v
+rtl/mul_div.v
+rtl/if_stage.v
+rtl/id_stage.v
+rtl/ex_stage.v
+rtl/mem_stage.v
+rtl/hazard_unit.v
+rtl/riscv_core.v

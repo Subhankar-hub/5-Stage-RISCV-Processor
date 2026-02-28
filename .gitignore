@@ -1,0 +1,40 @@
+# Vivado project files
+*.xpr
+*.runs/
+*.cache/
+*.srcs/
+*.sim/
+*.hw/
+*.ip_user_files/
+*.str
+
+# Vivado logs and journals
+*.jou
+*.log
+*.backup.log
+
+# Vivado temp
+.Xil/
+
+# XSim
+xsim.dir/
+xelab.pb
+xvlog.pb
+*.wdb
+
+# Build artifacts
+build/
+
+# ASIC flow (generated)
+asic/runs/
+asic/src/cpu_top.v
+
+# Reports (regenerable)
+reports/
+
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+*~
+
