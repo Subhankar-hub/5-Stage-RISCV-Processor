@@ -14,7 +14,6 @@ jobs:
 
     env:
       PDK_ROOT: ${{ github.workspace }}/pdks
-      OPENLANE_EXTRA_FLAGS: --dockerized --docker-no-tty
 
     steps:
       - name: Checkout repository
@@ -51,9 +50,16 @@ jobs:
           openlane --version
           volare --version || true
 
-      - name: Run ASIC RTL-to-GDS (make asic)
+      - name: Run ASIC RTL-to-GDS (make asic) in OpenLane2 Docker
         run: |
-          make asic
+          docker run --rm \
+            -v "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}" \
+            -v "${PDK_ROOT}:${PDK_ROOT}" \
+            -w "${GITHUB_WORKSPACE}" \
+            -e PDK_ROOT="${PDK_ROOT}" \
+            -e OPENLANE_EXTRA_FLAGS= \
+            ghcr.io/efabless/openlane2:2.3.10 \
+            bash -lc "openlane --version && make asic"
 
       - name: Archive ASIC run artifacts
         if: always()
