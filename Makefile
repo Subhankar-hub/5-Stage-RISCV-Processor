@@ -10,9 +10,13 @@ RTL_FILES = $(RTL_DIR)/defs.v $(RTL_DIR)/regfile.v $(RTL_DIR)/alu.v \
             $(RTL_DIR)/ex_stage.v $(RTL_DIR)/mem_stage.v $(RTL_DIR)/hazard_unit.v \
             $(RTL_DIR)/riscv_core.v
 
-# OpenLane2 (Nix) environment
-# We invoke OpenLane via the local Nix shell at ../openlane2.
-# PDK_ROOT must already point at the installed PDKs (e.g. /home/smith/asic/pdks).
+# OpenLane2 environment
+# Locally, run inside a Nix shell or Python venv where `openlane` is on PATH
+# and PDK_ROOT points at your Sky130 PDK (e.g. /home/smith/asic/pdks).
+# In CI, we install OpenLane2 with pip and run it in Dockerized mode.
+
+# Extra flags passed to the `openlane` CLI (e.g. --dockerized in CI).
+OPENLANE_EXTRA_FLAGS ?=
 
 # Simulation
 .PHONY: sim sim-iverilog
@@ -34,16 +38,14 @@ asic/src/riscv_core.v: $(RTL_FILES)
 	mkdir -p asic/src
 	cp $(RTL_FILES) asic/src/
 
-## Optional: quick environment check (no-op if OpenLane is not reachable)
+## Optional: quick environment check
 gds-setup:
-	@echo "OpenLane2 via Nix shell at ../openlane2 (PDK_ROOT=$(PDK_ROOT))"
-	@# Uncomment to smoke-test the installation:
-	@# nix-shell ../openlane2/shell.nix --run 'openlane --smoke-test'
+	@echo "Using OpenLane2 CLI: openlane $(OPENLANE_EXTRA_FLAGS) --pdk-root=$${PDK_ROOT:-<unset>}"
+	@openlane --version || echo "openlane not found on PATH"
 
-## Run full RTL-to-GDS flow via local OpenLane2 (Classic flow)
-## This will spawn the OpenLane2 Nix shell on demand; no Docker is used.
+## Run full RTL-to-GDS flow via OpenLane2 (Classic flow)
 gds: asic/src/riscv_core.v
-	nix-shell ../openlane2/shell.nix --run 'openlane --pdk-root $$PDK_ROOT $(CURDIR)/asic/config.tcl'
+	openlane $(OPENLANE_EXTRA_FLAGS) --pdk-root $(PDK_ROOT) $(CURDIR)/asic/config.tcl
 
 ## Open final GDS in KLayout
 gds-view:

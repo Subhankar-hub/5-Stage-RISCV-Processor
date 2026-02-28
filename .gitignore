@@ -12,7 +12,7 @@
 *.jou
 *.log
 *.backup.log
-
+Prompt.md
 # Vivado temp
 .Xil/
 
@@ -27,7 +27,7 @@ build/
 
 # ASIC flow (generated)
 asic/runs/
-asic/src/cpu_top.v
+asic/src/
 
 # Reports (regenerable)
 reports/

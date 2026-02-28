@@ -1,0 +1,63 @@
+name: ASIC RTL-to-GDS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  asic-flow:
+    name: OpenLane2 RTL-to-GDS
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    env:
+      PDK_ROOT: ${{ github.workspace }}/pdks
+      OPENLANE_EXTRA_FLAGS: --dockerized
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install OpenLane2 and Volare
+        run: |
+          python -m pip install --upgrade pip
+          # Install OpenLane2 from the official GitHub repo
+          git clone https://github.com/efabless/openlane2.git ../openlane2
+          python -m pip install ../openlane2
+          # Install volare for PDK management
+          python -m pip install "volare>=0.6" || python -m pip install volare
+          openlane --version
+
+      - name: Fetch Sky130A PDK with volare
+        run: |
+          mkdir -p "${PDK_ROOT}"
+          # Download and enable the Sky130 PDK into PDK_ROOT
+          volare enable --pdk sky130 --pdk-root "${PDK_ROOT}" || volare fetch --pdk sky130 --pdk-root "${PDK_ROOT}"
+
+      - name: Show environment
+        run: |
+          echo "PDK_ROOT=${PDK_ROOT}"
+          openlane --version
+          volare --version || true
+
+      - name: Run ASIC RTL-to-GDS (make asic)
+        run: |
+          make asic
+
+      - name: Archive ASIC run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: asic-openlane2-run
+          path: |
+            asic/runs/**
+            asic/src/**
+          if-no-files-found: warn
+
