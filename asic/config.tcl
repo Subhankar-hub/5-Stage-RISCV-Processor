@@ -16,12 +16,12 @@ set ::env(VERILOG_FILES) [list \
     [file join $src_dir riscv_core.v] \
 ]
 set ::env(VERILOG_INCLUDE_DIRS) [list $src_dir]
-set ::env(CLOCK_PERIOD) "10.0"
+set ::env(CLOCK_PERIOD) "20.0"
 set ::env(CLOCK_PORT) "clk"
 set ::env(FP_SIZING) "absolute"
-set ::env(DIE_AREA) "0 0 500 500"
-# Global placement target density; OpenROAD suggested ~0.89 for this design.
-set ::env(PL_TARGET_DENSITY) 0.89
+# Relax floorplan to reduce congestion / DPL failures.
+set ::env(DIE_AREA) "0 0 700 700"
+set ::env(PL_TARGET_DENSITY) 0.70
 set ::env(IO_PCT) "0.70"
 set ::env(PDK) "sky130A"
 set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
