@@ -66,8 +66,8 @@ jobs:
             bash -lc "openlane --version && \
                       openlane --run-tag \"${RUN_TAG}\" \
                                --pdk-root \"${PDK_ROOT}\" \
-                               --from cts \
-                               --to routing \
+                               --from OpenROAD.ResizerTimingPostCTS \
+                               --to OpenROAD.DetailedRouting \
                                \"${GITHUB_WORKSPACE}/asic/config.tcl\""
 
       - name: Cache OpenLane run (post-routing)

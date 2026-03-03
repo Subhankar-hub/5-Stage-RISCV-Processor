@@ -65,9 +65,9 @@ jobs:
             ghcr.io/efabless/openlane2:2.3.10 \
             bash -lc "openlane --version && \
                       openlane --run-tag \"${RUN_TAG}\" \
-                               --pdk-root \"${PDK_ROOT}}\" \
-                               --from signoff \
-                               --to gds \
+                               --pdk-root \"${PDK_ROOT}\" \
+                               --from Checker.LVS \
+                               --to Misc.ReportManufacturability \
                                \"${GITHUB_WORKSPACE}/asic/config.tcl\""
 
       - name: Upload final GDSII artifacts

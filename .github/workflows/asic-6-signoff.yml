@@ -66,8 +66,8 @@ jobs:
             bash -lc "openlane --version && \
                       openlane --run-tag \"${RUN_TAG}\" \
                                --pdk-root \"${PDK_ROOT}\" \
-                               --from routing \
-                               --to signoff \
+                               --from OpenROAD.DetailedRouting \
+                               --to Checker.LVS \
                                \"${GITHUB_WORKSPACE}/asic/config.tcl\""
 
       - name: Cache OpenLane run (post-signoff)

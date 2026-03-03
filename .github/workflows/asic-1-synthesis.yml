@@ -60,7 +60,7 @@ jobs:
             bash -lc "openlane --version && \
                       openlane --run-tag \"${RUN_TAG}\" \
                                --pdk-root \"${PDK_ROOT}\" \
-                               --to synthesis \
+                               --to Yosys.Synthesis \
                                \"${GITHUB_WORKSPACE}/asic/config.tcl\""
 
       - name: Cache OpenLane run (post-synthesis)
