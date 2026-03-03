@@ -55,6 +55,10 @@ jobs:
           volare enable --pdk sky130 --pdk-root "${PDK_ROOT}" "${VSKY130_VERSION}" \
             || volare fetch --pdk sky130 --pdk-root "${PDK_ROOT}" "${VSKY130_VERSION}"
 
+      - name: Prepare ASIC RTL sources
+        run: |
+          make asic/src/riscv_core.v
+
       - name: Run OpenLane placement (resume from floorplan)
         run: |
           docker run --rm \
