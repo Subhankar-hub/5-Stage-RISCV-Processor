@@ -27,5 +27,9 @@ set ::env(PDK) "sky130A"
 set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
 set ::env(SYNTH_STRATEGY) "AREA 0"
 set ::env(MAX_FANOUT_CONSTRAINT) 6
+# Global routing: reduce pessimism and allow more overflow cleanup iterations.
+# Defaults (as seen in CI resolved config): GRT_ADJUSTMENT=0.3, GRT_OVERFLOW_ITERS=50.
+set ::env(GRT_ADJUSTMENT) 0.20
+set ::env(GRT_OVERFLOW_ITERS) 200
 # Skip linter (path/module resolution issues + warnings as errors)
 set ::env(RUN_LINTER) 0
