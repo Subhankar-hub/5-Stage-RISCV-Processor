@@ -1,0 +1,86 @@
+name: ASIC 3 - Placement
+
+on:
+  workflow_dispatch:
+
+  workflow_run:
+    workflows: ["ASIC 2 - Floorplan"]
+    types: [completed]
+
+jobs:
+  placement:
+    name: ASIC Placement
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      PDK_ROOT: ${{ github.workspace }}/pdks
+      RUN_TAG: ci_riscv_core
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache PDK
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PDK_ROOT }}
+          key: sky130A-${{ runner.os }}-${{ hashFiles('asic/config.tcl') }}
+
+      - name: Restore OpenLane run from floorplan
+        uses: actions/cache@v4
+        with:
+          path: asic/runs
+          key: ol2-riscv-core-floorplan-${{ github.sha }}
+          restore-keys: |
+            ol2-riscv-core-floorplan-
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install OpenLane2 and Volare
+        run: |
+          python -m pip install --upgrade pip
+          git clone https://github.com/efabless/openlane2.git ../openlane2
+          python -m pip install ../openlane2
+          python -m pip install "volare>=0.6" || python -m pip install volare
+          openlane --version
+
+      - name: Fetch Sky130A PDK with volare
+        run: |
+          mkdir -p "${PDK_ROOT}"
+          VSKY130_VERSION=bdc9412b3e468c102d01b7cf6337be06ec6e9c9a
+          volare enable --pdk sky130 --pdk-root "${PDK_ROOT}" "${VSKY130_VERSION}" \
+            || volare fetch --pdk sky130 --pdk-root "${PDK_ROOT}" "${VSKY130_VERSION}"
+
+      - name: Run OpenLane placement (resume from floorplan)
+        run: |
+          docker run --rm \
+            -v "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}" \
+            -v "${PDK_ROOT}:${PDK_ROOT}" \
+            -w "${GITHUB_WORKSPACE}" \
+            -e PDK_ROOT="${PDK_ROOT}" \
+            ghcr.io/efabless/openlane2:2.3.10 \
+            bash -lc "openlane --version && \
+                      openlane --run-tag \"${RUN_TAG}\" \
+                               --pdk-root \"${PDK_ROOT}\" \
+                               --from floorplan \
+                               --to placement \
+                               \"${GITHUB_WORKSPACE}/asic/config.tcl\""
+
+      - name: Cache OpenLane run (post-placement)
+        uses: actions/cache@v4
+        with:
+          path: asic/runs
+          key: ol2-riscv-core-placement-${{ github.sha }}
+
+      - name: Upload placement artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: asic-openlane-placement
+          path: asic/runs/**
+          if-no-files-found: warn
+
