@@ -20,16 +20,17 @@ set ::env(CLOCK_PERIOD) "20.0"
 set ::env(CLOCK_PORT) "clk"
 set ::env(FP_SIZING) "absolute"
 # Relax floorplan to reduce congestion / DPL failures.
-set ::env(DIE_AREA) "0 0 700 700"
-set ::env(PL_TARGET_DENSITY) 0.70
+set ::env(DIE_AREA) "0 0 750 750"
+set ::env(PL_TARGET_DENSITY) 0.65
 set ::env(IO_PCT) "0.70"
 set ::env(PDK) "sky130A"
 set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
 set ::env(SYNTH_STRATEGY) "AREA 0"
 set ::env(MAX_FANOUT_CONSTRAINT) 6
-# Global routing: reduce pessimism and allow more overflow cleanup iterations.
-# Defaults (as seen in CI resolved config): GRT_ADJUSTMENT=0.3, GRT_OVERFLOW_ITERS=50.
+# Global routing: fewer overflow iters to avoid CI timeout (was 200).
 set ::env(GRT_ADJUSTMENT) 0.20
-set ::env(GRT_OVERFLOW_ITERS) 200
+set ::env(GRT_OVERFLOW_ITERS) 30
+# Detailed routing: fewer opt iters (default 64) to stay within 2h CI limit.
+set ::env(DRT_OPT_ITERS) 24
 # Skip linter (path/module resolution issues + warnings as errors)
 set ::env(RUN_LINTER) 0

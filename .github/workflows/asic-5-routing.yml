@@ -11,7 +11,7 @@ jobs:
   routing:
     name: ASIC Routing
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
 
     env:
       PDK_ROOT: ${{ github.workspace }}/pdks
